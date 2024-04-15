@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impossible Test</title>
     <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+    <link rel="shortcut icon" href="#">
 </head>
 <body>
     <h2>불가능은 없다</h2>
@@ -15,27 +16,32 @@
         </div>
         <button type="submit">테스트 시작</button>
     </form>
+
     <script>
         document.getElementById("participantForm").addEventListener("submit", function (event) {
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
 
-        fetch("/participant", {
+        fetch("/participants", {
             method: "POST",
-            headers: { "Content-Type": "application/json",},
-            body: JSON.stringify(data),})
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
             .then((response) => {
-            if (!response.ok) throw new Error("Network response was not ok.");
-              return response.json(); // 서버 응답을 JSON으로 파싱
+                if (!response.ok) throw new Error("Network response was not ok.");
+                return response.json(); // 서버 응답을 JSON으로 파싱
             })
             .then((data) => {
-              // 참여자 ID를 쿠키에 저장
-              document.cookie = "participant_id=" + data.participant_id + ";max-age=" + (60 * 60 * 24).toString() + ";path=/";
-              // 서버에서 받은 리다이렉션 URL로 페이지 이동
-            if (data.redirect) {
-                window.location.href = data.redirect;
-            }
+            // 참여자 ID를 쿠키에 저장
+                document.cookie = "participant_id=" + data.participant_id + ";max-age=" + (60 * 60 * 24).toString() + ";path=/";
+
+            // 서버에서 받은 리다이렉션 URL로 페이지 이동
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
             })
             .catch((error) => console.error("Error:", error));
         });
